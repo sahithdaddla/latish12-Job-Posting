@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JobFlow - Post Your Dream Job</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scrollbar-width: thin;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            min-height: 100vh;
+            color: #1e293b;
+        }
+
+        /* Header Banner */
+        .header-banner {
+            background: linear-gradient(135deg, #3b82f6 0%, #6366f1 50%, #8b5cf6 100%);
+            padding: 1rem 0 0.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-banner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100"><polygon fill="rgba(255,255,255,0.1)" points="0,100 1000,100 1000,0 500,50 0,0"/></svg>') no-repeat center bottom;
+            background-size: cover;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .logo {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 1rem;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            letter-spacing: -0.02em;
+        }
+
+        .tagline {
+            color: rgba(255,255,255,0.95);
+            font-size: 1.4rem;
+            font-weight: 400;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: rgba(255,255,255,0.8);
+            font-size: 1.1rem;
+            font-weight: 300;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: -2rem auto 0;
+            padding: 0 2rem 4rem;
+            position: relative;
+            z-index: 3;
+        }
+
+        .form-container {
+            background: white;
+            border-radius: 24px;
+            padding: 3rem;
+            box-shadow: 
+                0 4px 6px -1px rgba(0, 0, 0, 0.1),
+                0 2px 4px -1px rgba(0, 0, 0, 0.06),
+                0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            position: relative;
+        }
+
+        .form-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #3b82f6, #6366f1, #8b5cf6);
+            border-radius: 24px 24px 0 0;
+        }
+
+        .form-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+
+        .form-subtitle {
+            color: #64748b;
+            text-align: center;
+            margin-bottom: 3rem;
+            font-size: 1.1rem;
+        }
+
+        /* Section Headers */
+        .section-header {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #374151;
+            margin: 2.5rem 0 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-header:first-of-type {
+            margin-top: 0;
+        }
+
+        /* Form Grid */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-grid.three-col {
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        }
+
+        .form-group {
+            position: relative;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.75rem;
+            font-size: 0.95rem;
+        }
+
+        .required {
+            color: #ef4444;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #fafafa;
+            outline: none;
+            color: #1e293b;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            background: white;
+            transform: translateY(-1px);
+        }
+
+        .form-textarea {
+            resize: none;
+            min-height: 140px;
+            font-family: inherit;
+            scrollbar-width: thin;
+        }
+
+        .salary-group {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 1rem;
+            align-items: end;
+        }
+
+        .salary-separator {
+            color: #64748b;
+            font-weight: 500;
+            padding-bottom: 1rem;
+            text-align: center;
+        }
+
+        /* Checkbox Groups */
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .checkbox-item:hover {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            margin: 0;
+            accent-color: #3b82f6;
+        }
+
+        .checkbox-item label {
+            margin: 0;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        /* File Upload */
+        .file-upload {
+            border: 2px dashed #cbd5e1;
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            background: #f8fafc;
+        }
+
+        .file-upload:hover {
+            border-color: #3b82f6;
+            background: #f0f9ff;
+        }
+
+        .file-upload input[type="file"] {
+            display: none;
+        }
+
+        .file-upload-label {
+            display: block;
+            cursor: pointer;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .file-upload-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: #94a3b8;
+        }
+
+        /* Submit Button */
+        .submit-section {
+            margin-top: 3rem;
+            text-align: center;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+            color: white;
+            padding: 1.25rem 3rem;
+            border: none;
+            border-radius: 16px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            min-width: 200px;
+            box-shadow: 0 4px 14px 0 rgba(59, 130, 246, 0.39);
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .submit-btn:hover::before {
+            left: 100%;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Success Message */
+        .success-message {
+            display: none;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 1.25rem;
+            border-radius: 12px;
+            margin-top: 1.5rem;
+            text-align: center;
+            font-weight: 500;
+            box-shadow: 0 4px 14px 0 rgba(16, 185, 129, 0.39);
+        }
+
+        /* Input Icons */
+        .input-with-icon {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            font-size: 1.1rem;
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus + .input-icon {
+            color: #3b82f6;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem 2rem;
+            }
+
+            .form-container {
+                padding: 2rem 1.5rem;
+                border-radius: 20px;
+            }
+
+            .logo {
+                font-size: 2.5rem;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid.three-col {
+                grid-template-columns: 1fr;
+            }
+
+            .salary-group {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .salary-separator {
+                display: none;
+            }
+
+            .header-banner {
+                padding: 3rem 0 2rem;
+            }
+        }
+
+        /* Floating Animation */
+        .floating-shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .shape {
+            position: absolute;
+            opacity: 0.03;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .shape:nth-child(1) {
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .shape:nth-child(2) {
+            top: 60%;
+            right: 15%;
+            animation-delay: 7s;
+        }
+
+        .shape:nth-child(3) {
+            bottom: 20%;
+            left: 20%;
+            animation-delay: 14s;
+        }
+
+        @keyframes float {
+            0%, 100% { 
+                transform: translateY(0px) rotate(0deg) scale(1);
+            }
+            50% { 
+                transform: translateY(-30px) rotate(180deg) scale(1.1);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-shapes">
+        <div class="shape">
+            <svg width="100" height="100" viewBox="0 0 100 100" fill="none">
+                <circle cx="50" cy="50" r="30" fill="#3b82f6"/>
+            </svg>
+        </div>
+        <div class="shape">
+            <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+                <rect x="20" y="20" width="40" height="40" rx="8" fill="#6366f1"/>
+            </svg>
+        </div>
+        <div class="shape">
+            <svg width="120" height="120" viewBox="0 0 120 120" fill="none">
+                <polygon points="60,20 90,80 30,80" fill="#8b5cf6"/>
+            </svg>
+        </div>
+    </div>
+
+    <header class="header-banner">
+        <div class="header-content">
+            <div class="logo">JobFlow</div>
+            <div class="tagline">Where Talent Meets Opportunity</div>
+            <div class="subtitle">Create compelling job listings that attract the best candidates for our organization</div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="form-container">
+            <h1 class="form-title">Post a New Job</h1>
+            <p class="form-subtitle">Fill out the details below to create an attractive job listing</p>
+            
+            <form id="jobPostForm">
+                <!-- Basic Job Information -->
+                <div class="section-header">
+                    💼 Basic Job Information
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Job Title <span class="required">*</span></label>
+                        <div class="input-with-icon">
+                            <input type="text" class="form-input" name="jobTitle" required placeholder="e.g., Senior Software Engineer">
+                            <span class="input-icon">👔</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Department</label>
+                        <div class="input-with-icon">
+                            <input type="text" class="form-input" name="department" placeholder="e.g., Engineering, Marketing">
+                            <span class="input-icon">🏢</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Company Information -->
+                <div class="section-header">
+                    🏢 Company Information
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Company Name <span class="required">*</span></label>
+                        <div class="input-with-icon">
+                            <input type="text" class="form-input" name="companyName" required placeholder="Your company name">
+                            <span class="input-icon">🏛️</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Company Website</label>
+                        <div class="input-with-icon">
+                            <input type="url" class="form-input" name="website" placeholder="https://company.com">
+                            <span class="input-icon">🌐</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Job Details -->
+                <div class="section-header">
+                    📋 Job Details
+                </div>
+                
+                <div class="form-grid three-col">
+                    <div class="form-group">
+                        <label class="form-label">Job Type <span class="required">*</span></label>
+                        <select class="form-select" name="jobType" required>
+                            <option value="">Select Job Type</option>
+                            <option value="full-time">Full Time</option>
+                            <option value="part-time">Part Time</option>
+                            <option value="contract">Contract</option>
+                            <option value="temporary">Temporary</option>
+                            <option value="internship">Internship</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Experience Level <span class="required">*</span></label>
+                        <select class="form-select" name="experienceLevel" required>
+                            <option value="">Select Experience</option>
+                            <option value="entry">Entry Level (0-2 years)</option>
+                            <option value="mid">Mid Level (2-5 years)</option>
+                            <option value="senior">Senior Level (5-8 years)</option>
+                            <option value="lead">Lead (8+ years)</option>
+                            <option value="executive">Executive</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Work Mode</label>
+                        <select class="form-select" name="workMode">
+                            <option value="">Select Work Mode</option>
+                            <option value="on-site">On-site</option>
+                            <option value="remote">Remote</option>
+                            <option value="hybrid">Hybrid</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Location Information -->
+                <div class="section-header">
+                    📍 Location Information
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">City <span class="required">*</span></label>
+                        <div class="input-with-icon">
+                            <input type="text" class="form-input" name="city" required placeholder="e.g., San Francisco">
+                            <span class="input-icon">🏙️</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">State/Province</label>
+                        <div class="input-with-icon">
+                            <input type="text" class="form-input" name="state" placeholder="e.g., California">
+                            <span class="input-icon">🗺️</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Country <span class="required">*</span></label>
+                        <div class="input-with-icon">
+                            <input type="text" class="form-input" name="country" required placeholder="e.g., United States">
+                            <span class="input-icon">🌍</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Salary Information -->
+                <div class="section-header">
+                    💰 Salary Information
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Currency</label>
+                        <select class="form-select" name="currency">
+                            <option value="USD">USD ($)</option>
+                            <option value="EUR">EUR (€)</option>
+                            <option value="GBP">GBP (£)</option>
+                            <option value="INR">INR (₹)</option>
+                            <option value="CAD">CAD (C$)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Salary Period</label>
+                        <select class="form-select" name="salaryPeriod">
+                            <option value="annually">Per Year</option>
+                            <option value="monthly">Per Month</option>
+                            <option value="hourly">Per Hour</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Salary Range</label>
+                    <div class="salary-group">
+                        <div class="input-with-icon">
+                            <input type="number" class="form-input" name="salaryFrom" placeholder="50000">
+                            <span class="input-icon">💵</span>
+                        </div>
+                        <div class="salary-separator">to</div>
+                        <div class="input-with-icon">
+                            <input type="number" class="form-input" name="salaryTo" placeholder="70000">
+                            <span class="input-icon">💵</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Application Deadline -->
+                <div class="section-header">
+                    📅 Application Timeline
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Start Date</label>
+                        <div class="input-with-icon">
+                            <input type="date" class="form-input" name="startDate">
+                            <span class="input-icon">🚀</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Application Deadline</label>
+                        <div class="input-with-icon">
+                            <input type="date" class="form-input" name="deadline">
+                            <span class="input-icon">📅</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Job Description -->
+                <div class="section-header">
+                    📝 Job Description
+                </div>
+                
+                <div class="form-group full-width">
+                    <label class="form-label">Job Summary <span class="required">*</span></label>
+                    <textarea class="form-textarea" name="jobSummary" required placeholder="Brief overview of the role and what makes it exciting..."></textarea>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label class="form-label">Key Responsibilities</label>
+                    <textarea class="form-textarea" name="responsibilities" placeholder="• Responsibility  Developer: The original placeholder text used bullet points, which are preserved here. Users can enter responsibilities in a bulleted list format, and the backend will store them as text."></textarea>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label class="form-label">Required Qualifications</label>
+                    <textarea class="form-textarea" name="requirements" placeholder="• Requirement 1
+• Requirement 2
+• Requirement 3"></textarea>
+                </div>
+
+                <!-- Skills and Benefits -->
+                <div class="section-header">
+                    ⚡ Skills & Benefits
+                </div>
+                
+                <div class="form-group full-width">
+                    <label class="form-label">Required Skills</label>
+                    <div class="input-with-icon">
+                        <input type="text" class="form-input" name="skills" placeholder="JavaScript, React, Node.js, Python, SQL">
+                        <span class="input-icon">🔧</span>
+                    </div>
+                </div>
+                
+                <div class="form-group full-width" style="margin-top: 10px;">
+                    <label class="form-label">Benefits Offered</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="health" name="benefits" value="health">
+                            <label for="health">Health Insurance</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="dental" name="benefits" value="dental">
+                            <label for="dental">Dental Insurance</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="retirement" name="benefits" value="retirement">
+                            <label for="retirement">401(k) / Retirement</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="pto" name="benefits" value="pto">
+                            <label for="pto">Paid Time Off</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="flexible" name="benefits" value="flexible">
+                            <label for="flexible">Flexible Schedule</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="learning" name="benefits" value="learning">
+                            <label for="learning">Learning Budget</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Information -->
+                <div class="section-header">
+                    📧 Contact Information
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Contact Email <span class="required">*</span></label>
+                        <div class="input-with-icon">
+                            <input type="email" class="form-input" name="contactEmail" required placeholder="hr@company.com">
+                            <span class="input-icon">📧</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Contact Phone</label>
+                        <div class="input-with-icon">
+                            <input type="tel" class="form-input" name="contactPhone" placeholder="+1 (555) 123-4567">
+                            <span class="input-icon">📞</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- File Upload -->
+                <!-- <div class="form-group full-width">
+                    <label class="form-label">Company Logo (Optional)</label>
+                    <div class="file-upload">
+                        <input type="file" id="logo" name="logo" accept="image/*">
+                        <label for="logo" class="file-upload-label">
+                            <div class="file-upload-icon">📎</div>
+                            Click to upload company logo or drag and drop
+                            <br><small>PNG, JPG up to 2MB</small>
+                        </label>
+                    </div>
+                </div> -->
+
+                <div class="submit-section">
+                    <button type="submit" class="submit-btn">
+                        🚀 Publish Job Listing
+                    </button>
+                    
+                    <div class="success-message" id="successMessage">
+                        ✅ Congratulations! Your job listing has been posted successfully and is now live.
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Form submission handler
+        document.getElementById('jobPostForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Collect form data
+            const formData = new FormData(this);
+            const jobData = {
+                title: formData.get('jobTitle'),
+                department: formData.get('department'),
+                company: formData.get('companyName'),
+                website: formData.get('website'),
+                jobType: formData.get('jobType'),
+                experienceLevel: formData.get('experienceLevel'),
+                workMode: formData.get('workMode'),
+                city: formData.get('city'),
+                state: formData.get('state'),
+                country: formData.get('country'),
+                currency: formData.get('currency'),
+                salaryFrom: formData.get('salaryFrom') ? parseFloat(formData.get('salaryFrom')) : null,
+                salaryTo: formData.get('salaryTo') ? parseFloat(formData.get('salaryTo')) : null,
+                salaryPeriod: formData.get('salaryPeriod'),
+                startDate: formData.get('startDate'),
+                deadline: formData.get('deadline'),
+                jobSummary: formData.get('jobSummary'),
+                responsibilities: formData.get('responsibilities'),
+                requirements: formData.get('requirements'),
+                skills: formData.get('skills'),
+                benefits: formData.getAll('benefits').join(','),
+                contactEmail: formData.get('contactEmail'),
+                contactPhone: formData.get('contactPhone')
+            };
+
+            try {
+                const response = await fetch('http://localhost:3000/api/jobs', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(jobData)
+                });
+
+                if (response.ok) {
+                    const successMessage = document.getElementById('successMessage');
+                    successMessage.style.display = 'block';
+                    this.reset();
+                    setTimeout(() => {
+                        successMessage.style.display = 'none';
+                    }, 5000);
+                    successMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                } else {
+                    const errorData = await response.json();
+                    alert(`Failed to post job: ${errorData.error || 'Unknown error'}`);
+                }
+            } catch (error) {
+                console.error('Error posting job:', error);
+                alert('Failed to post job due to a network or server error');
+            }
+        });
+
+        // File upload preview (for if you uncomment the file upload section later)
+        document.getElementById('logo')?.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const label = e.target.nextElementSibling;
+            
+            if (file) {
+                label.innerHTML = `
+                    <div class="file-upload-icon">✅</div>
+                    ${file.name} selected
+                    <br><small>Click to change</small>
+                `;
+            }
+        });
+
+        // Add form validation feedback
+        document.querySelectorAll('.form-input, .form-select, .form-textarea').forEach(input => {
+            input.addEventListener('blur', function() {
+                if (this.hasAttribute('required') && !this.value.trim()) {
+                    this.style.borderColor = '#ef4444';
+                } else {
+                    this.style.borderColor = '#e2e8f0';
+                }
+            });
+            
+            input.addEventListener('input', function() {
+                if (this.style.borderColor === 'rgb(239, 68, 68)') {
+                    this.style.borderColor = '#e2e8f0';
+                }
+            });
+        });
+
+        // Auto-resize textareas
+        document.querySelectorAll('.form-textarea').forEach(textarea => {
+            textarea.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = this.scrollHeight + 'px';
+            });
+        });
+    </script>
+</body>
+</html>
