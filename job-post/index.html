@@ -355,6 +355,14 @@
             transform: translateY(-50%) scale(1.1);
         }
 
+        /* Error Message Styling */
+        .error-message {
+            color: #ef4444;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+
         /* Responsive Design */
         @media (max-width: 768px) {
             .container {
@@ -459,7 +467,7 @@
 
     <header class="header-banner">
         <div class="header-content">
-            <div class="logo">JobFlow</div>
+            <div class="logo">Career Path Process</div>
             <div class="tagline">Where Talent Meets Opportunity</div>
             <div class="subtitle">Create compelling job listings that attract the best candidates for our organization</div>
         </div>
@@ -622,11 +630,13 @@
                         <div class="input-with-icon">
                             <input type="number" class="form-input" name="salaryFrom" placeholder="50000">
                             <span class="input-icon">💵</span>
+                            <div class="error-message" id="salaryFromError"></div>
                         </div>
                         <div class="salary-separator">to</div>
                         <div class="input-with-icon">
                             <input type="number" class="form-input" name="salaryTo" placeholder="70000">
                             <span class="input-icon">💵</span>
+                            <div class="error-message" id="salaryToError"></div>
                         </div>
                     </div>
                 </div>
@@ -642,6 +652,7 @@
                         <div class="input-with-icon">
                             <input type="date" class="form-input" name="startDate">
                             <span class="input-icon">🚀</span>
+                            <div class="error-message" id="startDateError"></div>
                         </div>
                     </div>
 
@@ -650,6 +661,7 @@
                         <div class="input-with-icon">
                             <input type="date" class="form-input" name="deadline">
                             <span class="input-icon">📅</span>
+                            <div class="error-message" id="deadlineError"></div>
                         </div>
                     </div>
                 </div>
@@ -666,7 +678,9 @@
                 
                 <div class="form-group full-width">
                     <label class="form-label">Key Responsibilities</label>
-                    <textarea class="form-textarea" name="responsibilities" placeholder="• Responsibility  Developer: The original placeholder text used bullet points, which are preserved here. Users can enter responsibilities in a bulleted list format, and the backend will store them as text."></textarea>
+                    <textarea class="form-textarea" name="responsibilities" placeholder="• Responsibility 1
+• Responsibility 2
+• Responsibility 3"></textarea>
                 </div>
                 
                 <div class="form-group full-width">
@@ -738,6 +752,7 @@
                         <div class="input-with-icon">
                             <input type="tel" class="form-input" name="contactPhone" placeholder="+1 (555) 123-4567">
                             <span class="input-icon">📞</span>
+                            <div class="error-message" id="contactPhoneError"></div>
                         </div>
                     </div>
                 </div>
@@ -801,6 +816,28 @@
                 contactPhone: formData.get('contactPhone')
             };
 
+            // Validate before submission
+            const salaryFrom = parseFloat(formData.get('salaryFrom'));
+            const salaryTo = parseFloat(formData.get('salaryTo'));
+            const startDate = formData.get('startDate');
+            const deadline = formData.get('deadline');
+            const contactPhone = formData.get('contactPhone');
+
+            if (salaryFrom && salaryTo && salaryTo <= salaryFrom) {
+                showError('salaryToError', 'Maximum salary must be greater than minimum salary');
+                return;
+            }
+
+            if (startDate && deadline && new Date(deadline) <= new Date(startDate)) {
+                showError('deadlineError', 'Application deadline must be after start date');
+                return;
+            }
+
+            if (contactPhone && !/^\+?\d[\d\s-]*$/.test(contactPhone)) {
+                showError('contactPhoneError', 'Phone number must contain only digits, spaces, or hyphens');
+                return;
+            }
+
             try {
                 const response = await fetch('http://localhost:3000/api/jobs', {
                     method: 'POST',
@@ -826,21 +863,79 @@
             }
         });
 
-        // File upload preview (for if you uncomment the file upload section later)
-        document.getElementById('logo')?.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            const label = e.target.nextElementSibling;
-            
-            if (file) {
-                label.innerHTML = `
-                    <div class="file-upload-icon">✅</div>
-                    ${file.name} selected
-                    <br><small>Click to change</small>
-                `;
+        // Helper function to show error message
+        function showError(elementId, message) {
+            const errorElement = document.getElementById(elementId);
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+        }
+
+        // Helper function to clear error message
+        function clearError(elementId) {
+            const errorElement = document.getElementById(elementId);
+            errorElement.textContent = '';
+            errorElement.style.display = 'none';
+        }
+
+        // Real-time validation for Application Deadline and Start Date
+        const startDateInput = document.querySelector('input[name="startDate"]');
+        const deadlineInput = document.querySelector('input[name="deadline"]');
+
+        startDateInput.addEventListener('input', validateDates);
+        deadlineInput.addEventListener('input', validateDates);
+
+        function validateDates() {
+            const startDate = startDateInput.value;
+            const deadline = deadlineInput.value;
+
+            if (startDate && deadline) {
+                if (new Date(deadline) <= new Date(startDate)) {
+                    showError('deadlineError', 'Application deadline must be after start date');
+                    deadlineInput.style.borderColor = '#ef4444';
+                } else {
+                    clearError('deadlineError');
+                    deadlineInput.style.borderColor = '#e2e8f0';
+                }
+            } else {
+                clearError('deadlineError');
+                deadlineInput.style.borderColor = '#e2e8f0';
+            }
+        }
+
+        // Real-time validation for Salary Range
+        const salaryFromInput = document.querySelector('input[name="salaryFrom"]');
+        const salaryToInput = document.querySelector('input[name="salaryTo"]');
+
+        salaryFromInput.addEventListener('input', validateSalary);
+        salaryToInput.addEventListener('input', validateSalary);
+
+        function validateSalary() {
+            const salaryFrom = parseFloat(salaryFromInput.value);
+            const salaryTo = parseFloat(salaryToInput.value);
+
+            if (salaryFrom && salaryTo && salaryTo <= salaryFrom) {
+                showError('salaryToError', 'Maximum salary must be greater than minimum salary');
+                salaryToInput.style.borderColor = '#ef4444';
+            } else {
+                clearError('salaryToError');
+                salaryToInput.style.borderColor = '#e2e8f0';
+            }
+        }
+
+        // Real-time validation for Contact Phone
+        const contactPhoneInput = document.querySelector('input[name="contactPhone"]');
+        contactPhoneInput.addEventListener('input', function() {
+            const phoneValue = this.value;
+            if (phoneValue && !/^\+?\d[\d\s-]*$/.test(phoneValue)) {
+                showError('contactPhoneError', 'Phone number must contain only digits, spaces, or hyphens');
+                this.style.borderColor = '#ef4444';
+            } else {
+                clearError('contactPhoneError');
+                this.style.borderColor = '#e2e8f0';
             }
         });
 
-        // Add form validation feedback
+        // Existing validation for required fields
         document.querySelectorAll('.form-input, .form-select, .form-textarea').forEach(input => {
             input.addEventListener('blur', function() {
                 if (this.hasAttribute('required') && !this.value.trim()) {
@@ -851,8 +946,10 @@
             });
             
             input.addEventListener('input', function() {
-                if (this.style.borderColor === 'rgb(239, 68, 68)') {
-                    this.style.borderColor = '#e2e8f0';
+                if (this.hasAttribute('required') && this.style.borderColor === 'rgb(239, 68, 68)') {
+                    if (this.value.trim()) {
+                        this.style.borderColor = '#e2e8f0';
+                    }
                 }
             });
         });
