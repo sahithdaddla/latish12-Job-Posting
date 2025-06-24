@@ -2,14 +2,14 @@ const express = require('express');
 const { Pool } = require('pg');
 const cors = require('cors');
 const app = express();
-const port = 3000;
+const port = 3048;
 
 // PostgreSQL connection configuration
 const pool = new Pool({
     user: 'postgres',
-    host: 'localhost',
+    host: 'postgres',
     database: 'jobflow_db',
-    password: 'root',
+    password: 'admin123',
     port: 5432,
 });
 
@@ -158,5 +158,5 @@ app.post('/api/favorites', async (req, res) => {
 
 // Start server
 app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
+    console.log(`Server running at http://16.171.152.145:${port}`);
 });

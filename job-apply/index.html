@@ -996,7 +996,7 @@
 
         try {
             const response = await fetch(
-                `http://localhost:3000/api/jobs?page=${page}&limit=${jobsPerPage}&search=${encodeURIComponent(search)}`
+                `http://16.171.152.145:3048/api/jobs?page=${page}&limit=${jobsPerPage}&search=${encodeURIComponent(search)}`
             );
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
@@ -1076,7 +1076,7 @@
     // Function to fetch and show job details
     async function showJobDetails(jobId) {
         try {
-            const response = await fetch(`http://localhost:3000/api/jobs/${jobId}`);
+            const response = await fetch(`http://16.171.152.145:3048/api/jobs/${jobId}`);
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
@@ -1160,7 +1160,7 @@
             resume: 'Resume content or URL' // Replace with file upload or input
         };
         try {
-            const response = await fetch('http://localhost:3000/api/applications', {
+            const response = await fetch('http://16.171.152.145:3048/api/applications', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(applicationData)
@@ -1192,7 +1192,7 @@
             userId: 'user123' // Replace with actual user ID from authentication
         };
         try {
-            const response = await fetch('http://localhost:3000/api/favorites', {
+            const response = await fetch('http://16.171.152.145:3048/api/favorites', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(favoriteData)
