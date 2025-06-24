@@ -1,9 +1,3 @@
--- Create database
-CREATE DATABASE jobflow_db;
-
--- Connect to the database
-\c jobflow_db;
-
 -- Create jobs table
 CREATE TABLE jobs (
     id SERIAL PRIMARY KEY,

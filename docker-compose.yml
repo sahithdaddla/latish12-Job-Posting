@@ -1,0 +1,57 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:14
+    container_name: latish12-postgres
+    environment:
+      POSTGRES_DB: jobflow_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin123
+    ports:
+      - "5478:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql 
+    networks:
+      - jobpost-net
+
+  backend:
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile
+    container_name: latish12-backend
+    ports:
+      - "3048:3048"
+    depends_on:
+      - postgres
+    networks:
+      - jobpost-net
+
+  job-apply:
+    build:
+      context: ./job-apply
+      dockerfile: Dockerfile
+    container_name: latish12-job-apply
+    ports:
+      - "8207:80"
+    networks:
+      - jobpost-net
+
+  job-post:
+    build:
+      context: ./job-post
+      dockerfile: Dockerfile
+    container_name: latish12-job-post
+    ports:
+      - "8208:80"
+    networks:
+      - jobpost-net
+
+volumes:
+  pgdata:
+
+networks:
+  jobpost-net:
+    driver: bridge
+
